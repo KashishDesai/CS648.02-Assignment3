@@ -16,31 +16,59 @@ class ProductList extends React.Component {
           }
         }`;
 
-        const data = await graphQLFetch(query);
+        fetch('/graphql', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query })
+        }).then(response => {
+            response.json().then(result => {
+                this.setState({ products: result.data.productList });
+            });
+        }).catch(err => {
+            alert("Error in sending data to server: " + err.message);
+        });
+        // const data = await graphQLFetch(query);
 
-        this.setState({ products: data.productList });
+        // this.setState({ products: data.productList });
     }
 
-    async createProduct(product) {
-        product.id = this.state.products.length + 1;
-        const newProducts = this.state.products.slice();
-        newProducts.push(product);
-        this.setState({ products: newProducts });
-        const query = `mutation {
-            productAdd(product: {
-            product_category: ${product.product_category}
-            product_name: "${product.product_name}"
-            product_price: "${product.product_price}"
-            product_image: "${product.product_image}"
-          }) {
-            id
-          }
-        }`;
+    // async createProduct(product) {
+    //     product.id = this.state.products.length + 1;
+    //     const newProducts = this.state.products.slice();
+    //     newProducts.push(product)
+    //     this.setState({ products: newProducts });
+    //     const query = `mutation {
+    //         productAdd(product: {
+    //         product_category: ${product.product_category}
+    //         product_name: "${product.product_name}"
+    //         product_price: ${product.product_price}
+    //         product_image: "${product.product_image}"
+    //       }) {
+    //         id
+    //       }
+    //     }`;
 
-        const data = await graphQLFetch(query);
-        if (data) {
+    //     const data = await graphQLFetch(query);
+    //     if (data) {
+    //         this.loadData();
+    //     }
+    // }
+
+    createProduct(newProduct) {
+        const query = `mutation productAdd($newProduct: ProductInputs!) {
+			productAdd(product: $newProduct) {
+				id
+			}
+		}`;
+        fetch('/graphql', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query, variables: { newProduct } })
+        }).then(response => {
             this.loadData();
-        }
+        }).catch(err => {
+            alert("Error in sending data to server: " + err.message);
+        });
     }
 
     // createProduct(product) {
@@ -52,26 +80,26 @@ class ProductList extends React.Component {
 
     render() {
         return React.createElement(
-            "div",
-            { title: "Inner Div" },
+            'div',
+            { title: 'Inner Div' },
             React.createElement(
-                "h1",
-                { className: "headerClass" },
-                " My Company Inventory "
+                'h1',
+                { className: 'headerClass' },
+                ' My Company Inventory '
             ),
             React.createElement(
-                "h2",
-                { className: "headerClass" },
-                " Showing all available products "
+                'h2',
+                { className: 'headerClass' },
+                ' Showing all available products '
             ),
-            React.createElement("hr", null),
+            React.createElement('hr', null),
             React.createElement(ProductTable, { products: this.state.products }),
             React.createElement(
-                "h2",
+                'h2',
                 null,
-                "Add a new product to the inventory"
+                'Add a new product to the inventory'
             ),
-            React.createElement("hr", null),
+            React.createElement('hr', null),
             React.createElement(ProductAdd, { createProduct: this.createProduct })
         );
     }
@@ -81,37 +109,37 @@ function ProductTable(props) {
     const productRows = props.products.map(product => React.createElement(ProductRow, { key: product.id, product: product }));
 
     return React.createElement(
-        "div",
+        'div',
         null,
         React.createElement(
-            "table",
-            { className: "bordered-table" },
+            'table',
+            { className: 'bordered-table' },
             React.createElement(
-                "thead",
+                'thead',
                 null,
                 React.createElement(
-                    "th",
+                    'th',
                     null,
-                    "Product Name"
+                    'Product Name'
                 ),
                 React.createElement(
-                    "th",
+                    'th',
                     null,
-                    "Price"
+                    'Price'
                 ),
                 React.createElement(
-                    "th",
+                    'th',
                     null,
-                    "Category"
+                    'Category'
                 ),
                 React.createElement(
-                    "th",
+                    'th',
                     null,
-                    "Image"
+                    'Image'
                 )
             ),
             React.createElement(
-                "tbody",
+                'tbody',
                 null,
                 productRows
             )
@@ -138,80 +166,80 @@ class ProductAdd extends React.Component {
 
     render() {
         return React.createElement(
-            "div",
+            'div',
             null,
             React.createElement(
-                "form",
-                { name: "productAddForm", onSubmit: this.handleSubmit },
+                'form',
+                { name: 'productAddForm', onSubmit: this.handleSubmit },
                 React.createElement(
-                    "div",
-                    { className: "row" },
+                    'div',
+                    { className: 'row' },
                     React.createElement(
-                        "div",
-                        { className: "column" },
+                        'div',
+                        { className: 'column' },
                         React.createElement(
-                            "h4",
-                            { className: "addFormTitle" },
-                            "Product Category"
+                            'h4',
+                            { className: 'addFormTitle' },
+                            'Product Category'
                         ),
                         React.createElement(
-                            "select",
-                            { name: "productCategory" },
+                            'select',
+                            { name: 'productCategory' },
                             React.createElement(
-                                "option",
+                                'option',
                                 null,
-                                "Shirts"
+                                'Shirts'
                             ),
                             React.createElement(
-                                "option",
+                                'option',
                                 null,
-                                "Jeans"
+                                'Jeans'
                             ),
                             React.createElement(
-                                "option",
+                                'option',
                                 null,
-                                "Jackets"
+                                'Jackets'
                             ),
                             React.createElement(
-                                "option",
+                                'option',
                                 null,
-                                "Sweaters"
+                                'Sweaters'
                             ),
                             React.createElement(
-                                "option",
+                                'option',
                                 null,
-                                "Accessories"
+                                'Accessories'
                             )
                         ),
                         React.createElement(
-                            "h4",
-                            { className: "addFormTitle" },
-                            "Product Name"
+                            'h4',
+                            { className: 'addFormTitle' },
+                            'Product Name'
                         ),
-                        React.createElement("input", { type: "text", name: "productName", placeholder: "Product Name" })
+                        React.createElement('input', { type: 'text', name: 'productName', placeholder: 'Product Name' })
                     ),
                     React.createElement(
-                        "div",
-                        { className: "column" },
+                        'div',
+                        { className: 'column' },
                         React.createElement(
-                            "h4",
-                            { className: "addFormTitle" },
-                            "Product Price"
+                            'h4',
+                            { className: 'addFormTitle' },
+                            'Product Price'
                         ),
-                        React.createElement("input", { defaultValue: "$", type: "text", name: "productPrice" }),
+                        React.createElement('input', { defaultValue: '$', type: 'text', name: 'productPrice' }),
                         React.createElement(
-                            "h4",
-                            { className: "addFormTitle" },
-                            "Image URL"
+                            'h4',
+                            { className: 'addFormTitle' },
+                            'Image URL'
                         ),
-                        React.createElement("input", { type: "text", name: "productImage", placeholder: "Product Image" })
+                        React.createElement('input', { type: 'text', name: 'productImage', placeholder: 'Product Image' })
                     )
                 ),
-                React.createElement("br", null),
+                React.createElement('br', null),
                 React.createElement(
-                    "button",
+                    'button',
                     null,
-                    "Add Product"
+                    'Add Product'
                 )
             )
         );
@@ -222,31 +250,31 @@ function ProductRow(props) {
     const product = props.product;
 
     return React.createElement(
-        "tr",
+        'tr',
         null,
         React.createElement(
-            "td",
+            'td',
             null,
             product.product_name
         ),
         React.createElement(
-            "td",
+            'td',
             null,
-            "$",
+            '$',
             product.product_price
         ),
         React.createElement(
-            "td",
+            'td',
             null,
             product.product_category
         ),
         React.createElement(
-            "td",
+            'td',
             null,
             React.createElement(
-                "a",
-                { href: product.product_image, target: "_blank" },
-                "View"
+                'a',
+                { href: product.product_image, target: '_blank' },
+                'View'
             )
         )
     );
@@ -260,6 +288,7 @@ async function graphQLFetch(query) {
     });
     const body = await response.text();
     const result = JSON.parse(body, jsonDateReviver);
+    return result.data;
 }
 
 const element = React.createElement(ProductList, null);

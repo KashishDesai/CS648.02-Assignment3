@@ -16,32 +16,60 @@ class ProductList extends React.Component {
           }
         }`;
 
-        const data = await graphQLFetch(query);
+        fetch('/graphql', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query })
+        }).then(response => {
+            response.json().then(result => {
+                this.setState({ products: result.data.productList });
+            })
+        }).catch(err => {
+            alert("Error in sending data to server: " + err.message);
+        });
+        // const data = await graphQLFetch(query);
 
-        this.setState({ products: data.productList });
+        // this.setState({ products: data.productList });
 
     }
 
-    async createProduct(product) {
-        product.id = this.state.products.length + 1;
-        const newProducts = this.state.products.slice();
-        newProducts.push(product)
-        this.setState({ products: newProducts });
-        const query = `mutation {
-            productAdd(product: {
-            product_category: ${product.product_category}
-            product_name: "${product.product_name}"
-            product_price: "${product.product_price}"
-            product_image: "${product.product_image}"
-          }) {
-            id
-          }
-        }`;
+    // async createProduct(product) {
+    //     product.id = this.state.products.length + 1;
+    //     const newProducts = this.state.products.slice();
+    //     newProducts.push(product)
+    //     this.setState({ products: newProducts });
+    //     const query = `mutation {
+    //         productAdd(product: {
+    //         product_category: ${product.product_category}
+    //         product_name: "${product.product_name}"
+    //         product_price: ${product.product_price}
+    //         product_image: "${product.product_image}"
+    //       }) {
+    //         id
+    //       }
+    //     }`;
 
-        const data = await graphQLFetch(query);
-        if (data) {
-            this.loadData();
-        }
+    //     const data = await graphQLFetch(query);
+    //     if (data) {
+    //         this.loadData();
+    //     }
+    // }
+
+    createProduct(newProduct) {
+        const query = `mutation productAdd($newProduct: ProductInputs!) {
+			productAdd(product: $newProduct) {
+				id
+			}
+		}`;
+        fetch('/graphql', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query, variables: { newProduct } })
+        }).then(response => {
+            this.loadData()
+        }).catch(err => {
+            alert("Error in sending data to server: " + err.message);
+        });
     }
 
     // createProduct(product) {
@@ -161,6 +189,7 @@ async function graphQLFetch(query) {
     });
     const body = await response.text();
     const result = JSON.parse(body, jsonDateReviver);
+    return result.data;
 }
 
 
