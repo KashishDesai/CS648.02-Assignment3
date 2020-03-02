@@ -248,17 +248,6 @@ function ProductRow(props) {
     );
 };
 
-async function graphQLFetch(query) {
-    const response = await fetch('/graphql', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query })
-    });
-    const body = await response.text();
-    const result = JSON.parse(body, jsonDateReviver);
-    return result.data;
-}
-
 const element = React.createElement(ProductList, null);
 
 ReactDOM.render(element, document.getElementById('content'));
