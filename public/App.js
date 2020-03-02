@@ -27,32 +27,7 @@ class ProductList extends React.Component {
         }).catch(err => {
             alert("Error in sending data to server: " + err.message);
         });
-        // const data = await graphQLFetch(query);
-
-        // this.setState({ products: data.productList });
     }
-
-    // async createProduct(product) {
-    //     product.id = this.state.products.length + 1;
-    //     const newProducts = this.state.products.slice();
-    //     newProducts.push(product)
-    //     this.setState({ products: newProducts });
-    //     const query = `mutation {
-    //         productAdd(product: {
-    //         product_category: ${product.product_category}
-    //         product_name: "${product.product_name}"
-    //         product_price: ${product.product_price}
-    //         product_image: "${product.product_image}"
-    //       }) {
-    //         id
-    //       }
-    //     }`;
-
-    //     const data = await graphQLFetch(query);
-    //     if (data) {
-    //         this.loadData();
-    //     }
-    // }
 
     createProduct(newProduct) {
         const query = `mutation productAdd($newProduct: ProductInputs!) {
@@ -70,13 +45,6 @@ class ProductList extends React.Component {
             alert("Error in sending data to server: " + err.message);
         });
     }
-
-    // createProduct(product) {
-    //     // product.id = new Date().getTime();
-    //     const newProducts = this.state.products.slice();
-    //     newProducts.push(product)
-    //     this.setState({ products: newProducts });
-    // }
 
     render() {
         return React.createElement(
@@ -157,7 +125,7 @@ class ProductAdd extends React.Component {
         e.preventDefault();
         const form = document.forms.productAddForm;
         const price = form.productPrice.value;
-        const product = { product_name: form.productName.value, product_price: price.substring(1, price.length), product_category: form.productCategory.value, product_image: form.productImage.value };
+        const product = { product_name: form.productName.value, product_price: parseFloat(price.substring(1, price.length)), product_category: form.productCategory.value, product_image: form.productImage.value };
         this.props.createProduct(product);
         form.productName.value = "";
         form.productPrice.value = "$";

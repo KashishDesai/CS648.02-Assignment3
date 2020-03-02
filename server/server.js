@@ -1,26 +1,18 @@
 const express = require('express');
 const fs = require('fs');
 const { ApolloServer, UserInputError } = require('apollo-server-express');
-const { Kind } = require('graphql/language');
 
-let aboutMessage = "Issue Tracker API v1.0";
 
 const productsDB = [];
 
 const resolvers = {
     Query: {
-        about: () => aboutMessage,
         productList,
     },
     Mutation: {
-        setAboutMessage,
         productAdd,
     }
 };
-
-function setAboutMessage(_, { message }) {
-    return aboutMessage = message;
-}
 
 function productList() {
     return productsDB;

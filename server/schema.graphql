@@ -10,23 +10,21 @@ type Product {
   id: Int!
   product_category: Category!
   product_name: String!
-  product_price: String!
+  product_price: Float!
   product_image: String!
 }
 
 input ProductInputs {
   product_category: Category
   product_name: String
-  product_price: String
+  product_price: Float
   product_image: String
 }
 
 type Query {
-  about: String!
   productList: [Product!]!
 }
 
 type Mutation {
-  setAboutMessage(message: String!): String
   productAdd(product: ProductInputs!): Product!
 }
